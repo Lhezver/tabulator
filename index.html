@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://unpkg.com/tabulator-tables@6.2.5/dist/css/tabulator.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://unpkg.com/tabulator-tables@6.2.5/dist/js/tabulator.min.js"></script>
+
+    <script type="text/javascript" src="https://moment.github.io/luxon/global/luxon.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js"></script>
+
+    <style>
+        * {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+    <title>Tabulator</title>
+</head>
+
+<body>
+    <button id="generate-pdf">Generar PDF</button>
+    <div id="example-table"></div>
+    <script>
+        let tabledata = [
+            { id: 1, name: "Oli Bob", age: "12", col: "red", dob: "12/08/2017" },
+            { id: 2, name: "Mary May", age: "1", col: "blue", dob: "14/05/1982" },
+            { id: 3, name: "Christine Lobowski", age: "42", col: "green", dob: "22/05/1982" },
+            { id: 4, name: "Brendon Philips", age: "125", col: "orange", dob: "01/08/1980" },
+            { id: 5, name: "Margret Marmajuke", age: "16", col: "yellow", dob: "31/01/1999" },
+            { id: 6, name: "John Doe", age: "28", col: "purple", dob: "12/12/1992" },
+            { id: 7, name: "Jane Smith", age: "34", col: "pink", dob: "25/07/1986" },
+            { id: 8, name: "Michael Johnson", age: "45", col: "gray", dob: "10/11/1975" },
+            { id: 9, name: "Patricia Brown", age: "22", col: "white", dob: "19/09/1998" },
+            { id: 10, name: "Linda Williams", age: "29", col: "black", dob: "02/02/1991" },
+            { id: 11, name: "James Jones", age: "39", col: "red", dob: "05/06/1981" },
+            { id: 12, name: "Barbara Miller", age: "25", col: "blue", dob: "30/03/1995" },
+            { id: 13, name: "Robert Garcia", age: "50", col: "green", dob: "17/08/1970" },
+            { id: 14, name: "Jennifer Martinez", age: "33", col: "orange", dob: "12/04/1987" },
+            { id: 15, name: "Michael Davis", age: "27", col: "yellow", dob: "22/12/1993" },
+            { id: 16, name: "Elizabeth Hernandez", age: "41", col: "purple", dob: "05/05/1979" },
+            { id: 17, name: "William Wilson", age: "35", col: "pink", dob: "03/03/1985" },
+            { id: 18, name: "Maria Anderson", age: "38", col: "gray", dob: "20/10/1982" },
+            { id: 19, name: "David Thomas", age: "31", col: "white", dob: "11/11/1989" },
+            { id: 20, name: "Susan Taylor", age: "26", col: "black", dob: "14/04/1994" },
+            { id: 21, name: "Christopher Moore", age: "32", col: "red", dob: "25/05/1988" },
+            { id: 22, name: "Nancy Jackson", age: "37", col: "blue", dob: "16/06/1983" },
+            { id: 23, name: "Thomas White", age: "28", col: "green", dob: "27/07/1992" },
+            { id: 24, name: "Karen Harris", age: "43", col: "orange", dob: "08/08/1977" },
+            { id: 25, name: "Daniel Martin", age: "29", col: "yellow", dob: "19/09/1991" },
+            { id: 26, name: "Ashley Thompson", age: "30", col: "purple", dob: "10/10/1990" },
+            { id: 27, name: "Paul Lee", age: "36", col: "pink", dob: "21/11/1984" },
+            { id: 28, name: "Donna Walker", age: "34", col: "gray", dob: "02/12/1986" },
+            { id: 29, name: "Mark Hall", age: "27", col: "white", dob: "13/01/1993" },
+            { id: 30, name: "Carol Young", age: "33", col: "black", dob: "24/02/1987" },
+            { id: 31, name: "George King", age: "31", col: "red", dob: "05/03/1989" },
+            { id: 32, name: "Michelle Wright", age: "28", col: "blue", dob: "16/04/1992" },
+            { id: 33, name: "Kenneth Green", age: "45", col: "green", dob: "27/05/1975" },
+            { id: 34, name: "Emily Adams", age: "24", col: "orange", dob: "08/06/1996" },
+            { id: 35, name: "Brian Baker", age: "32", col: "yellow", dob: "19/07/1988" },
+            { id: 36, name: "Dorothy Nelson", age: "36", col: "purple", dob: "30/08/1984" },
+            { id: 37, name: "Jason Carter", age: "29", col: "pink", dob: "11/09/1991" },
+            { id: 38, name: "Megan Mitchell", age: "26", col: "gray", dob: "22/10/1994" },
+            { id: 39, name: "Ronald Perez", age: "39", col: "white", dob: "03/11/1981" },
+            { id: 40, name: "Betty Roberts", age: "35", col: "black", dob: "14/12/1985" },
+            { id: 41, name: "Anthony Roberts", age: "44", col: "red", dob: "25/01/1976" },
+            { id: 42, name: "Jessica Turner", age: "27", col: "blue", dob: "05/02/1993" },
+            { id: 43, name: "Andrew Phillips", age: "31", col: "green", dob: "16/03/1989" },
+            { id: 44, name: "Angela Campbell", age: "29", col: "orange", dob: "27/04/1991" },
+            { id: 45, name: "Matthew Parker", age: "30", col: "yellow", dob: "08/05/1990" },
+            { id: 46, name: "Amanda Evans", age: "33", col: "purple", dob: "19/06/1987" },
+            { id: 47, name: "Joshua Edwards", age: "36", col: "pink", dob: "30/07/1984" },
+            { id: 48, name: "Stephanie Collins", age: "24", col: "gray", dob: "10/08/1996" },
+            { id: 49, name: "Charles Stewart", age: "32", col: "white", dob: "21/09/1988" },
+            { id: 50, name: "Rebecca Sanchez", age: "28", col: "black", dob: "01/10/1992" },
+            { id: 51, name: "Justin Morris", age: "31", col: "red", dob: "12/11/1989" },
+            { id: 52, name: "Laura Rogers", age: "26", col: "blue", dob: "23/12/1994" },
+            { id: 53, name: "Frank Reed", age: "33", col: "green", dob: "04/01/1987" },
+            { id: 54, name: "Sarah Cook", age: "35", col: "orange", dob: "15/02/1985" },
+            { id: 55, name: "Kevin Morgan", age: "29", col: "yellow", dob: "26/03/1991" },
+            { id: 56, name: "Karen Bell", age: "36", col: "purple", dob: "07/04/1984" },
+            { id: 57, name: "Scott Bailey", age: "38", col: "pink", dob: "18/05/1982" },
+            { id: 58, name: "Lisa Rivera", age: "30", col: "gray", dob: "29/06/1990" },
+            { id: 59, name: "Edward Cooper", age: "27", col: "white", dob: "10/07/1993" },
+            { id: 60, name: "Oli Bob", age: "12", col: "red", dob: "12/08/2017" },
+            { id: 61, name: "Mary May", age: "1", col: "blue", dob: "14/05/1982" },
+            { id: 62, name: "Christine Lobowski", age: "42", col: "green", dob: "22/05/1982" },
+            { id: 63, name: "Brendon Philips", age: "125", col: "orange", dob: "01/08/1980" },
+            { id: 64, name: "Margret Marmajuke", age: "16", col: "yellow", dob: "31/01/1999" },
+            { id: 65, name: "John Doe", age: "28", col: "purple", dob: "12/12/1992" },
+            { id: 66, name: "Jane Smith", age: "34", col: "pink", dob: "25/07/1986" },
+            { id: 67, name: "Michael Johnson", age: "45", col: "gray", dob: "10/11/1975" },
+            { id: 68, name: "Patricia Brown", age: "22", col: "white", dob: "19/09/1998" },
+            { id: 69, name: "Linda Williams", age: "29", col: "black", dob: "02/02/1991" },
+            { id: 70, name: "James Jones", age: "39", col: "red", dob: "05/06/1981" },
+            { id: 71, name: "Barbara Miller", age: "25", col: "blue", dob: "30/03/1995" },
+            { id: 72, name: "Robert Garcia", age: "50", col: "green", dob: "17/08/1970" },
+            { id: 73, name: "Jennifer Martinez", age: "33", col: "orange", dob: "12/04/1987" },
+            { id: 74, name: "Michael Davis", age: "27", col: "yellow", dob: "22/12/1993" },
+            { id: 75, name: "Elizabeth Hernandez", age: "41", col: "purple", dob: "05/05/1979" },
+            { id: 76, name: "William Wilson", age: "35", col: "pink", dob: "03/03/1985" },
+            { id: 77, name: "Maria Anderson", age: "38", col: "gray", dob: "20/10/1982" },
+            { id: 78, name: "David Thomas", age: "31", col: "white", dob: "11/11/1989" },
+            { id: 79, name: "Susan Taylor", age: "26", col: "black", dob: "14/04/1994" },
+            { id: 80, name: "Christopher Moore", age: "32", col: "red", dob: "25/05/1988" },
+            { id: 81, name: "Nancy Jackson", age: "37", col: "blue", dob: "16/06/1983" },
+            { id: 82, name: "Thomas White", age: "28", col: "green", dob: "27/07/1992" },
+            { id: 83, name: "Karen Harris", age: "43", col: "orange", dob: "08/08/1977" },
+            { id: 84, name: "Daniel Martin", age: "29", col: "yellow", dob: "19/09/1991" },
+            { id: 85, name: "Ashley Thompson", age: "30", col: "purple", dob: "10/10/1990" },
+            { id: 86, name: "Paul Lee", age: "36", col: "pink", dob: "21/11/1984" },
+            { id: 87, name: "Donna Walker", age: "34", col: "gray", dob: "02/12/1986" },
+            { id: 88, name: "Mark Hall", age: "27", col: "white", dob: "13/01/1993" },
+            { id: 89, name: "Carol Young", age: "33", col: "black", dob: "24/02/1987" },
+            { id: 90, name: "George King", age: "31", col: "red", dob: "05/03/1989" },
+            { id: 91, name: "Michelle Wright", age: "28", col: "blue", dob: "16/04/1992" },
+            { id: 92, name: "Kenneth Green", age: "45", col: "green", dob: "27/05/1975" },
+            { id: 93, name: "Emily Adams", age: "24", col: "orange", dob: "08/06/1996" },
+            { id: 94, name: "Brian Baker", age: "32", col: "yellow", dob: "19/07/1988" },
+            { id: 95, name: "Dorothy Nelson", age: "36", col: "purple", dob: "30/08/1984" },
+            { id: 96, name: "Jason Carter", age: "29", col: "pink", dob: "11/09/1991" },
+            { id: 97, name: "Megan Mitchell", age: "26", col: "gray", dob: "22/10/1994" },
+            { id: 98, name: "Ronald Perez", age: "39", col: "white", dob: "03/11/1981" },
+            { id: 99, name: "Betty Roberts", age: "35", col: "black", dob: "14/12/1985" },
+            { id: 100, name: "Anthony Roberts", age: "44", col: "red", dob: "25/01/1976" },
+        ];
+
+        let nombre = 'ja';
+        let table = new Tabulator("#example-table", {
+            data: tabledata, //assign data to table
+            layout: "fitColumns", //fit columns to width of table (optional)
+            pagination: "local",
+            paginationSize: 10,
+            paginationSizeSelector: [3, 6, 8, 10],
+            movableColumns: true,
+            paginationCounter: "rows",
+            columns: [ //Define Table Columns
+                { title: "Name", field: "name", headerFilter: "input" },
+                { title: "Age", field: "age", hozAlign: "left", formatter: "progress", headerFilter: "input" },
+                { title: "Favourite Color", field: "col", headerFilter: "input" },
+                { title: "Date Of Birth", field: "dob", sorter: "date", hozAlign: "center", headerFilter: "input" },
+                {
+                    title: "Acciones",
+                    field: "actions",
+                    hozAlign: "center",
+                    formatter: function (cell, formatterParams) { //cell - the cell component
+                        let id = cell.getRow().getData().id;
+                        return `<button onclick="window.location.href='ver/${id}'">Ver</button>`;
+                    },
+                    headerSort: false,
+                    headerFilter: false
+                }
+            ],
+            initialHeaderFilter: [
+                { field: "name", value: nombre } // Set the initial value of the header filter for the "name" column
+            ]
+        });
+
+        document.getElementById("generate-pdf").addEventListener("click", function () {
+            // Obtener los datos de la tabla excluyendo la columna de acciones
+            var tableData = table.getData().map(row => {
+                return {
+                    name: row.name,
+                    age: row.age,
+                    col: row.col,
+                    dob: row.dob
+                };
+            });
+
+            // Crear un nuevo documento jsPDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // Añadir la cabecera
+            doc.setFontSize(16);
+            doc.setTextColor(128, 128, 128); // Gris
+            doc.text('Tabla de Ejemplo', 14, 16);
+
+            // Añadir la tabla al documento PDF usando autoTable
+            let totalPagesExp = "{total_pages_count_string}"; // Placeholder for total pages number
+            doc.autoTable({
+                startY: 22,
+                head: [['Name', 'Age', 'Favourite Color', 'Date Of Birth']],
+                body: tableData.map(row => [row.name, row.age, row.col, row.dob]),
+                margin: { bottom: 10 },
+                didDrawPage: function (data) {
+                    // Numeración de páginas
+                    var pageCount = doc.internal.getNumberOfPages();
+                    var pageSize = doc.internal.pageSize;
+                    var pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                    doc.setFontSize(10);
+                    doc.setTextColor(128, 128, 128); // Gris
+                    var pageText = 'Página ' + data.pageNumber + ' de ' + totalPagesExp;
+                    var textWidth = doc.getStringUnitWidth(pageText) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+                    var textOffset = (pageSize.width - textWidth) - 14;
+                    doc.text(pageText, textOffset, pageHeight - 10);
+
+                    // Añadir pie de página
+                    doc.text('Leonardo Insaurralde', data.settings.margin.left, pageHeight - 10);
+                },
+                headStyles: {
+                    textColor: [255, 255, 255], // Blanco
+                    fillColor: [128, 128, 128] // Gris de fondo
+                },
+                bodyStyles: {
+                    textColor: [0, 0, 0] // Negro
+                }
+            });
+
+            // Replace the placeholder with the total number of pages
+            if (typeof doc.putTotalPages === 'function') {
+                doc.putTotalPages(totalPagesExp);
+            }
+
+            // Descargar el PDF
+            doc.save('table.pdf');
+        });
+    </script>
+</body>
+
+</html>
